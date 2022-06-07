@@ -12,9 +12,9 @@ import (
 )
 
 type ChargeResponse struct {
-	StatusCode int
-	Status     string
-	Uuid       string
+	StatusCode int    `json:"statusCode"`
+	Status     string `json:"status"`
+	Uuid       string `json:"uuid"`
 }
 
 func Charge(writer http.ResponseWriter, request *http.Request) {
