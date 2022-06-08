@@ -2,8 +2,8 @@ package application
 
 import (
 	"fmt"
-	"http-endpoint/application/contracts/dto"
 	"net/http"
+	"payervice-http-endpoint/application/contracts/dto"
 	"strconv"
 )
 
