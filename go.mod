@@ -1,4 +1,4 @@
-module http-endpoint
+module payervice-http-endpoint
 
 go 1.18
 

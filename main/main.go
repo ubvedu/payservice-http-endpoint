@@ -3,10 +3,10 @@ package main
 import (
 	"fmt"
 	"github.com/gorilla/mux"
-	"http-endpoint/config"
-	"http-endpoint/handlers"
 	"log"
 	"net/http"
+	"payervice-http-endpoint/config"
+	"payervice-http-endpoint/handlers"
 )
 
 func main() {

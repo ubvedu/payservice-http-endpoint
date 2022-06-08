@@ -4,10 +4,10 @@ import (
 	"encoding/json"
 	"github.com/golobby/container/v3"
 	"github.com/gorilla/mux"
-	"http-endpoint/application/contracts"
-	"http-endpoint/application/contracts/dto"
 	"log"
 	"net/http"
+	"payervice-http-endpoint/application/contracts"
+	"payervice-http-endpoint/application/contracts/dto"
 	"strconv"
 )
 
