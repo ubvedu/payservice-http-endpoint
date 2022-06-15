@@ -21,9 +21,13 @@ func main() {
 	auth.Use(middleware.Auth)
 
 	// example:
-	//		/charge?token=0f62fe
+	//
+	//		/charge?access_token=0f62fe
+	//
 	// must contain json body:
-	// 	{ "amount": 100, "terminalId": "x", "invoiceId": "y", "description": "z" }
+	//
+	// 		{ "amount": 100, "terminalId": "x", "invoiceId": "y", "description": "z" }
+	//
 	auth.
 		HandleFunc("/charge", handlers.Charge).
 		Methods(http.MethodPost).
