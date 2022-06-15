@@ -1,4 +1,4 @@
-module payervice-http-endpoint
+module payservice-http-endpoint
 
 go 1.18
 

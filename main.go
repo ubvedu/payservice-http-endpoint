@@ -5,8 +5,8 @@ import (
     "github.com/gorilla/mux"
     "log"
     "net/http"
-    "payervice-http-endpoint/handlers"
     "payservice-core/config"
+    "payservice-http-endpoint/handlers"
 )
 
 func main() {
