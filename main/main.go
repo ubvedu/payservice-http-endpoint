@@ -1,34 +1,34 @@
 package main
 
 import (
-	"fmt"
-	"github.com/gorilla/mux"
-	"log"
-	"net/http"
-	"payervice-http-endpoint/config"
-	"payervice-http-endpoint/handlers"
+    "fmt"
+    "github.com/gorilla/mux"
+    "log"
+    "net/http"
+    "payervice-http-endpoint/handlers"
+    "payservice-core/config"
 )
 
 func main() {
-	if err := config.BuildDI(); err != nil {
-		log.Panicln(err)
-	}
+    if err := config.BuildDI(); err != nil {
+        log.Panicln(err)
+    }
 
-	router := mux.NewRouter()
+    router := mux.NewRouter()
 
-	// example:
-	// 		/charge?amount=10000&terminalId=foo&invoiceId=bar&description=aboba
-	router.
-		Path("/charge").
-		Queries(
-			"amount", "{amount:[0-9]+}",
-			"terminalId", "{terminalId}",
-			"invoiceId", "{invoiceId}",
-			"description", "{description}",
-		).
-		HandlerFunc(handlers.Charge)
+    // example:
+    // 		/charge?amount=10000&terminalId=foo&invoiceId=bar&description=aboba
+    router.
+        Path("/charge").
+        Queries(
+            "amount", "{amount:[0-9]+}",
+            "terminalId", "{terminalId}",
+            "invoiceId", "{invoiceId}",
+            "description", "{description}",
+        ).
+        HandlerFunc(handlers.Charge)
 
-	port := "8080"
-	log.Printf("Serving at: http://localhost:%s\n", port)
-	log.Fatalln(http.ListenAndServe(fmt.Sprintf(":%s", port), router))
+    port := "8080"
+    log.Printf("Serving at: http://localhost:%s\n", port)
+    log.Fatalln(http.ListenAndServe(fmt.Sprintf(":%s", port), router))
 }
