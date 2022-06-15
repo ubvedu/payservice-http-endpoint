@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"payservice-http-endpoint/handlers"
+	"payservice-http-endpoint/middleware"
 )
 
 func main() {
@@ -16,7 +17,10 @@ func main() {
 
 	router := mux.NewRouter()
 
-	router.
+	auth := router.Queries("token", "{token}").Subrouter()
+	auth.Use(middleware.Auth)
+
+	auth.
 		HandleFunc("/charge", handlers.Charge).
 		Methods(http.MethodPost).
 		Headers("Content-Type", "application/json")
