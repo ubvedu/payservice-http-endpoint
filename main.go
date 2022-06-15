@@ -17,9 +17,13 @@ func main() {
 
 	router := mux.NewRouter()
 
-	auth := router.Queries("token", "{token}").Subrouter()
+	auth := router.Queries("access_token", "{token}").Subrouter()
 	auth.Use(middleware.Auth)
 
+	// example:
+	//		/charge?token=0f62fe
+	// must contain json body:
+	// 	{ "amount": 100, "terminalId": "x", "invoiceId": "y", "description": "z" }
 	auth.
 		HandleFunc("/charge", handlers.Charge).
 		Methods(http.MethodPost).

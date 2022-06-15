@@ -46,8 +46,8 @@ func Charge(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	writer.WriteHeader(http.StatusOK)
 	writer.Header().Set("Content-Type", "application/json")
+	writer.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(writer).Encode(ChargeResponse{
 		StatusCode: result.Status(),
 		Status:     result.StatusName(),
