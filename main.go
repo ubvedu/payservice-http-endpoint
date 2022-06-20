@@ -26,7 +26,12 @@ func main() {
 	//
 	// must contain json body:
 	//
-	// 		{ "amount": 100, "terminalId": "x", "invoiceId": "y", "description": "z" }
+	// 		{
+	//		    "amount": 100,
+	//		    "terminalId": "x",
+	//		    "invoiceId": "y",
+	//		    "description": "aboba"
+	//		}
 	//
 	auth.
 		HandleFunc("/charge", handlers.Charge).
