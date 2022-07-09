@@ -22,31 +22,31 @@ type ChargeResponse struct {
     Uuid       string `json:"uuid"`
 }
 
-func Charge(writer http.ResponseWriter, request *http.Request) {
+func Charge(w http.ResponseWriter, r *http.Request) {
 
     var client server.PayServiceClient
     if err := container.Resolve(&client); err != nil {
         log.Fatalln(err)
     }
 
-    var data ChargeRequest
-    if err := json.NewDecoder(request.Body).Decode(&data); err != nil {
-        http.Error(writer, err.Error(), http.StatusBadRequest)
+    var requestData ChargeRequest
+    if err := json.NewDecoder(r.Body).Decode(&requestData); err != nil {
+        http.Error(w, err.Error(), http.StatusBadRequest)
         return
     }
 
-    rpcRequest := data.Rpc()
-    log.Println("new request:", rpcRequest)
+    rpcRequestData := requestData.Rpc()
+    log.Println("new request:", rpcRequestData)
 
-    result, err := client.Charge(request.Context(), data.Rpc())
+    result, err := client.Charge(r.Context(), requestData.Rpc())
     if err != nil {
-        http.Error(writer, err.Error(), http.StatusInternalServerError)
+        http.Error(w, err.Error(), http.StatusInternalServerError)
         return
     }
 
-    writer.Header().Set("Content-Type", "application/json")
-    writer.WriteHeader(http.StatusOK)
-    if err := json.NewEncoder(writer).Encode(NewChargeResponse(result)); err != nil {
+    w.Header().Set("Content-Type", "application/json")
+    w.WriteHeader(http.StatusOK)
+    if err := json.NewEncoder(w).Encode(NewChargeResponse(result)); err != nil {
         log.Fatalln(err)
     }
 }

@@ -7,6 +7,7 @@ import (
     "log"
     "net/http"
     "os"
+    endpoint "payservice-http-endpoint"
     "payservice-http-endpoint/config"
 )
 
@@ -20,5 +21,5 @@ func main() {
 
     port := "8080"
     log.Printf("Serving at: http://localhost:%s\n", port)
-    log.Fatalln(http.ListenAndServe(fmt.Sprintf(":%s", port), NewRouter()))
+    log.Fatalln(http.ListenAndServe(fmt.Sprintf(":%s", port), endpoint.NewRouter()))
 }
