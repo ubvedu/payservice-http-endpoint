@@ -4,6 +4,8 @@ import (
     coreConfig "core-payment-lesson/config"
     _ "embed"
     "fmt"
+    "google.golang.org/grpc"
+    "google.golang.org/grpc/credentials/insecure"
     "log"
     "net/http"
     "os"
@@ -21,7 +23,14 @@ func main() {
     if err != nil {
         log.Fatalln(err)
     }
-    config.BuildDI(conf)
+
+    conn, err := grpc.Dial(":"+conf.Grpc.Port, grpc.WithTransportCredentials(insecure.NewCredentials()))
+    if err != nil {
+        log.Fatalln(err)
+    }
+    defer conn.Close()
+
+    config.BuildDI(conn)
 
     server := &http.Server{
         Addr:         ":" + conf.Http.Port,
