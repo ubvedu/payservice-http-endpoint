@@ -36,7 +36,7 @@ func Charge(w http.ResponseWriter, r *http.Request) {
 
     w.Header().Set("Content-Type", "application/json")
     w.WriteHeader(http.StatusOK)
-    if err := json.NewEncoder(w).Encode(NewChargeResponse(result)); err != nil {
+    if err := json.NewEncoder(w).Encode(MakeChargeResponse(result)); err != nil {
         log.Fatalln(err)
     }
 }
@@ -109,8 +109,8 @@ type ChargeResponse struct {
     Uuid       string `json:"uuid"`
 }
 
-func NewChargeResponse(rpc *server.ChargeResponseMessage) *ChargeResponse {
-    return &ChargeResponse{
+func MakeChargeResponse(rpc *server.ChargeResponseMessage) ChargeResponse {
+    return ChargeResponse{
         StatusCode: rpc.GetStatusCode(),
         Status:     rpc.GetStatusName(),
         Uuid:       rpc.GetUuid(),
