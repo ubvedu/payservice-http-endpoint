@@ -3,24 +3,13 @@ package handlers
 import (
     "core-payment-lesson/server"
     "encoding/json"
+    "fmt"
     "github.com/golobby/container/v3"
     "github.com/google/uuid"
+    "github.com/liangyaopei/checker"
     "log"
     "net/http"
 )
-
-type ChargeRequest struct {
-    Amount      int64  `json:"amount"`
-    TerminalId  string `json:"terminalId"`
-    InvoiceId   string `json:"invoiceId"`
-    Description string `json:"description"`
-}
-
-type ChargeResponse struct {
-    StatusCode int32  `json:"statusCode"`
-    Status     string `json:"status"`
-    Uuid       string `json:"uuid"`
-}
 
 func Charge(w http.ResponseWriter, r *http.Request) {
 
@@ -34,9 +23,10 @@ func Charge(w http.ResponseWriter, r *http.Request) {
         http.Error(w, err.Error(), http.StatusBadRequest)
         return
     }
-
-    rpcRequestData := requestData.Rpc()
-    log.Println("new request:", rpcRequestData)
+    if valid, message := requestData.Check(); !valid {
+        http.Error(w, message, http.StatusBadRequest)
+        return
+    }
 
     result, err := client.Charge(r.Context(), requestData.Rpc())
     if err != nil {
@@ -51,23 +41,72 @@ func Charge(w http.ResponseWriter, r *http.Request) {
     }
 }
 
+type ChargeRequest struct {
+    Amount      int64  `json:"amount"`
+    Currency    string `json:"currency"`
+    TerminalId  string `json:"terminalId,omitempty"`
+    InvoiceId   string `json:"invoiceId,omitempty"`
+    Description string `json:"description"`
+    CreditCard  struct {
+        Number            string `json:"number,omitempty"`
+        VerificationValue string `json:"verificationValue,omitempty"`
+        Holder            string `json:"holder,omitempty"`
+        ExpMonth          int32  `json:"expMonth,omitempty"`
+        ExpYear           string `json:"expYear,omitempty"`
+        Token             string `json:"token,omitempty"`
+    } `json:"creditCard"`
+}
+
 func (r *ChargeRequest) Rpc() *server.ChargeRequestMessage {
     return &server.ChargeRequestMessage{
         Amount:      r.Amount,
-        Currency:    "RUB",
-        TerminalId:  uuid.New().String(),
-        InvoiceId:   uuid.New().String(),
+        Currency:    r.Currency,
+        TerminalId:  r.TerminalId,
+        InvoiceId:   r.InvoiceId,
         Description: r.Description,
         CreditCard: &server.ChargeRequestMessage_CreditCard{
-            Number:                       "0123456789101112",
-            VerificationValue:            "123",
-            Holder:                       "MOMENTUM R",
-            ExpMonth:                     10,
-            ExpYear:                      "2025",
-            Token:                        "",
+            Number:                       r.CreditCard.Number,
+            VerificationValue:            r.CreditCard.VerificationValue,
+            Holder:                       r.CreditCard.Holder,
+            ExpMonth:                     server.ChargeRequestMessage_CreditCard_ExpMonth(r.CreditCard.ExpMonth - 1),
+            ExpYear:                      r.CreditCard.ExpYear,
+            Token:                        r.CreditCard.Token,
             SkipThreeDSecureVerification: false,
         },
     }
+}
+
+func (r *ChargeRequest) Check() (valid bool, message string) {
+    return checker.And(
+        checker.NeInt("Amount", 0),
+        UUID("TerminalId"),
+        checker.Field("CreditCard", checker.Or(
+            checker.And(
+                checker.Length("Number", 12, 19),
+                checker.Length("VerificationValue", 3, 4),
+                checker.NeStr("Holder", ""),
+                checker.RangeInt("ExpMonth", 1, 12),
+                checker.NeStr("ExpYear", ""),
+            ),
+            checker.NeStr("Token", ""),
+        )),
+    ).Check(r)
+}
+
+func UUID(fieldExpr string) checker.Rule {
+    return checker.Custom(fieldExpr, func(exprValue any) (bool, string) {
+        value := exprValue.(string)
+        if _, err := uuid.Parse(value); err != nil {
+            return false, fmt.Sprintf("%s is not UUID", fieldExpr)
+        }
+        return true, ""
+    })
+}
+
+type ChargeResponse struct {
+    StatusCode int32  `json:"statusCode"`
+    Status     string `json:"status"`
+    Uuid       string `json:"uuid"`
 }
 
 func NewChargeResponse(rpc *server.ChargeResponseMessage) *ChargeResponse {
