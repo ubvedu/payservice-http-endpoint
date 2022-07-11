@@ -21,7 +21,9 @@ func main() {
     if err != nil {
         log.Fatalln(err)
     }
-    config.BuildDI(conf)
+    if err := config.BuildDI(conf); err != nil {
+        log.Fatalln(err)
+    }
 
     server := &http.Server{
         Addr:         ":" + conf.Http.Port,

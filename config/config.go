@@ -6,10 +6,9 @@ import (
     "github.com/golobby/container/v3"
     "google.golang.org/grpc"
     "google.golang.org/grpc/credentials/insecure"
-    "log"
 )
 
-func BuildDI(config *config.Config) {
+func BuildDI(config *config.Config) error {
     if err := container.Singleton(func() (server.PayServiceClient, error) {
         conn, err := grpc.Dial(":"+config.Grpc.Port, grpc.WithTransportCredentials(insecure.NewCredentials()))
         if err != nil {
@@ -17,6 +16,8 @@ func BuildDI(config *config.Config) {
         }
         return server.NewPayServiceClient(conn), nil
     }); err != nil {
-        log.Fatalln(err)
+        return err
     }
+
+    return nil
 }
