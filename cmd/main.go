@@ -26,10 +26,8 @@ func main() {
     }
 
     server := &http.Server{
-        Addr:         ":" + conf.Http.Port,
-        Handler:      endpoint.NewRouter(),
-        ReadTimeout:  conf.Http.ReadTimeout,
-        WriteTimeout: conf.Http.WriteTimeout,
+        Addr:    ":" + conf.Http.Port,
+        Handler: endpoint.NewRouter(),
     }
     log.Printf("Serving at: http://localhost:%s\n", conf.Http.Port)
     log.Fatalln(server.ListenAndServe())

@@ -11,6 +11,11 @@ func NewRouter() http.Handler {
 
     router := mux.NewRouter()
 
+    router.
+        HandleFunc("/signIn", handlers.SignIn).
+        Methods(http.MethodPost).
+        Queries("email", "{email}", "password", "{password}")
+
     auth := router.Queries("accessToken", "{token}").Subrouter()
     auth.Use(middleware.Auth)
 

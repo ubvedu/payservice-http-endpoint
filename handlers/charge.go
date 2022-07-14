@@ -88,7 +88,7 @@ func (r *ChargeRequest) Check() (valid bool, message string) {
                 checker.RangeInt("ExpMonth", 1, 12),
                 checker.NeStr("ExpYear", ""),
             ),
-            checker.NeStr("Token", ""),
+            checker.NeStr("AccessToken", ""),
         )),
     ).Check(r)
 }
