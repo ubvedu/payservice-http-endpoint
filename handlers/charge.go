@@ -30,7 +30,7 @@ func Charge(w http.ResponseWriter, r *http.Request) {
 
     result, err := client.Charge(r.Context(), requestData.Rpc())
     if err != nil {
-        http.Error(w, err.Error(), http.StatusInternalServerError)
+        http.Error(w, fmt.Sprintf("core server error:\n%s", err.Error()), http.StatusInternalServerError)
         return
     }
 

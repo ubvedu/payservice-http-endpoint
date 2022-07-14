@@ -23,12 +23,12 @@ func Auth(next http.Handler) http.Handler {
 
         id, err := authentication.Id(token)
         if err != nil {
-            http.Error(w, err.Error(), http.StatusUnauthorized)
+            http.Error(w, fmt.Sprintf("authentication error:\n%s", err.Error()), http.StatusUnauthorized)
             return
         }
 
         if !users.HasId(id) {
-            http.Error(w, fmt.Sprintf("cannot find user: %s", id.String()), http.StatusForbidden)
+            http.Error(w, fmt.Sprintf("authentication error:\ncannot find user: %s", id.String()), http.StatusForbidden)
             return
         }
 
